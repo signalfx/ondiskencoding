@@ -59,6 +59,9 @@ type BufferEntry struct {
 }
 
 //easyjson:json
+type BufferEntries []*BufferEntry
+
+//easyjson:json
 type BufferOnDisk struct {
 	Traces   map[string]*BufferEntry `json:",omitempty"`
 	NumSpans int64                   `json:",omitempty"` // num spans buffered in Traces
