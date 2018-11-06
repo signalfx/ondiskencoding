@@ -22,6 +22,8 @@ func (k *SpanIdentity) Dims() map[string]string {
 	}
 	if k.Error {
 		m["error"] = "true"
+	} else {
+		m["error"] = "false"
 	}
 	if k.HttpMethod != "" {
 		m["httpMethod"] = k.HttpMethod
