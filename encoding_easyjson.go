@@ -828,10 +828,6 @@ func easyjsonE453ad8fDecodeGithubComSignalfxOndiskencoding6(in *jlexer.Lexer, ou
 				}
 				in.Delim('}')
 			}
-		case "MetricsReservoirSize":
-			out.MetricsReservoirSize = int(in.Int())
-		case "MetricsAlphaFactor":
-			out.MetricsAlphaFactor = float64(in.Float64())
 		default:
 			in.SkipRecursive()
 		}
@@ -869,26 +865,6 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding6(out *jwriter.Writer,
 			}
 			out.RawByte('}')
 		}
-	}
-	if in.MetricsReservoirSize != 0 {
-		const prefix string = ",\"MetricsReservoirSize\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Int(int(in.MetricsReservoirSize))
-	}
-	if in.MetricsAlphaFactor != 0 {
-		const prefix string = ",\"MetricsAlphaFactor\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.Float64(float64(in.MetricsAlphaFactor))
 	}
 	out.RawByte('}')
 }
@@ -936,11 +912,35 @@ func easyjsonE453ad8fDecodeGithubComSignalfxOndiskencoding7(in *jlexer.Lexer, ou
 		}
 		switch key {
 		case "Error":
-			(out.Error).UnmarshalEasyJSON(in)
+			if in.IsNull() {
+				in.Skip()
+				out.Error = nil
+			} else {
+				if out.Error == nil {
+					out.Error = new(HistoOnDisk)
+				}
+				(*out.Error).UnmarshalEasyJSON(in)
+			}
 		case "Span":
-			(out.Span).UnmarshalEasyJSON(in)
+			if in.IsNull() {
+				in.Skip()
+				out.Span = nil
+			} else {
+				if out.Span == nil {
+					out.Span = new(HistoOnDisk)
+				}
+				(*out.Span).UnmarshalEasyJSON(in)
+			}
 		case "Trace":
-			(out.Trace).UnmarshalEasyJSON(in)
+			if in.IsNull() {
+				in.Skip()
+				out.Trace = nil
+			} else {
+				if out.Trace == nil {
+					out.Trace = new(HistoOnDisk)
+				}
+				(*out.Trace).UnmarshalEasyJSON(in)
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -955,7 +955,7 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding7(out *jwriter.Writer,
 	out.RawByte('{')
 	first := true
 	_ = first
-	if true {
+	if in.Error != nil {
 		const prefix string = ",\"Error\":"
 		if first {
 			first = false
@@ -963,9 +963,9 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding7(out *jwriter.Writer,
 		} else {
 			out.RawString(prefix)
 		}
-		(in.Error).MarshalEasyJSON(out)
+		(*in.Error).MarshalEasyJSON(out)
 	}
-	if true {
+	if in.Span != nil {
 		const prefix string = ",\"Span\":"
 		if first {
 			first = false
@@ -973,9 +973,9 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding7(out *jwriter.Writer,
 		} else {
 			out.RawString(prefix)
 		}
-		(in.Span).MarshalEasyJSON(out)
+		(*in.Span).MarshalEasyJSON(out)
 	}
-	if true {
+	if in.Trace != nil {
 		const prefix string = ",\"Trace\":"
 		if first {
 			first = false
@@ -983,7 +983,7 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding7(out *jwriter.Writer,
 		} else {
 			out.RawString(prefix)
 		}
-		(in.Trace).MarshalEasyJSON(out)
+		(*in.Trace).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }
@@ -1991,35 +1991,15 @@ func easyjsonE453ad8fDecodeGithubComSignalfxOndiskencoding11(in *jlexer.Lexer, o
 		}
 		switch key {
 		case "RebalanceAddress":
-			if in.IsNull() {
-				in.Skip()
-				out.RebalanceAddress = nil
-			} else {
-				if out.RebalanceAddress == nil {
-					out.RebalanceAddress = new(string)
-				}
-				*out.RebalanceAddress = string(in.String())
-			}
+			out.RebalanceAddress = string(in.String())
 		case "IngestAddress":
-			if in.IsNull() {
-				in.Skip()
-				out.IngestAddress = nil
-			} else {
-				if out.IngestAddress == nil {
-					out.IngestAddress = new(string)
-				}
-				*out.IngestAddress = string(in.String())
-			}
+			out.IngestAddress = string(in.String())
 		case "ID":
-			if in.IsNull() {
-				in.Skip()
-				out.ID = nil
-			} else {
-				if out.ID == nil {
-					out.ID = new(string)
-				}
-				*out.ID = string(in.String())
-			}
+			out.ID = string(in.String())
+		case "Weight":
+			out.Weight = int32(in.Int32())
+		case "Version":
+			out.Version = int32(in.Int32())
 		default:
 			in.SkipRecursive()
 		}
@@ -2034,7 +2014,7 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding11(out *jwriter.Writer
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.RebalanceAddress != nil {
+	if in.RebalanceAddress != "" {
 		const prefix string = ",\"RebalanceAddress\":"
 		if first {
 			first = false
@@ -2042,9 +2022,9 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding11(out *jwriter.Writer
 		} else {
 			out.RawString(prefix)
 		}
-		out.String(string(*in.RebalanceAddress))
+		out.String(string(in.RebalanceAddress))
 	}
-	if in.IngestAddress != nil {
+	if in.IngestAddress != "" {
 		const prefix string = ",\"IngestAddress\":"
 		if first {
 			first = false
@@ -2052,9 +2032,9 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding11(out *jwriter.Writer
 		} else {
 			out.RawString(prefix)
 		}
-		out.String(string(*in.IngestAddress))
+		out.String(string(in.IngestAddress))
 	}
-	if in.ID != nil {
+	if in.ID != "" {
 		const prefix string = ",\"ID\":"
 		if first {
 			first = false
@@ -2062,7 +2042,27 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding11(out *jwriter.Writer
 		} else {
 			out.RawString(prefix)
 		}
-		out.String(string(*in.ID))
+		out.String(string(in.ID))
+	}
+	if in.Weight != 0 {
+		const prefix string = ",\"Weight\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int32(int32(in.Weight))
+	}
+	if in.Version != 0 {
+		const prefix string = ",\"Version\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int32(int32(in.Version))
 	}
 	out.RawByte('}')
 }

@@ -51,7 +51,7 @@ func (k *SpanIdentity) String() string {
 	if k.HttpMethod != "" {
 		s += ", HttpMethod:" + k.HttpMethod
 	}
-	if k.HttpMethod != "" {
+	if k.Kind != "" {
 		s += ", Kind:" + k.Kind
 	}
 	return fmt.Sprintf("Identity[Service:%s, Operation:%s, Error:%t%s]", k.Service, k.Operation, k.Error, s)
@@ -86,16 +86,14 @@ type HistoOnDiskEntry struct {
 
 //easyjson:json
 type HistoOnDisk struct {
-	Entries              map[SpanIdentity]HistoOnDiskEntry `json:",omitempty"`
-	MetricsReservoirSize int                               `json:",omitempty"`
-	MetricsAlphaFactor   float64                           `json:",omitempty"`
+	Entries map[SpanIdentity]HistoOnDiskEntry `json:",omitempty"`
 }
 
 //easyjson:json
 type Histo struct {
-	Error HistoOnDisk `json:",omitempty"`
-	Span  HistoOnDisk `json:",omitempty"`
-	Trace HistoOnDisk `json:",omitempty"`
+	Error *HistoOnDisk `json:",omitempty"`
+	Span  *HistoOnDisk `json:",omitempty"`
+	Trace *HistoOnDisk `json:",omitempty"`
 }
 
 //easyjson:json
@@ -176,9 +174,11 @@ type SampleEntry struct {
 
 //easyjson:json
 type EtcdConfig struct {
-	RebalanceAddress *string `json:",omitempty"`
-	IngestAddress    *string `json:",omitempty"`
-	ID               *string `json:",omitempty"`
+	RebalanceAddress string `json:",omitempty"`
+	IngestAddress    string `json:",omitempty"`
+	ID               string `json:",omitempty"`
+	Weight           int32  `json:",omitempty"`
+	Version          int32  `json:",omitempty"`
 }
 
 //easyjson:json
