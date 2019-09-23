@@ -32,3 +32,16 @@ func Test(t *testing.T) {
 		})
 	}
 }
+
+func TestAdditionalDims(t *testing.T) {
+	Convey("test additional dims", t, func() {
+		si := &SpanIdentity{Service: "service", Operation: "operation"}
+		nsi := NewExtendedSpanIdentity(si, map[string]string{"foo": "bar", "bar": "baz"})
+		So(nsi.Dims(), ShouldResemble, map[string]string{"foo": "bar", "bar": "baz", "service": "service", "operation": "operation", "sf_dimensionalized": "true", "error": "false"})
+	})
+	Convey("test forbidden dims", t, func() {
+		si := &SpanIdentity{Service: "service", Operation: "operation"}
+		nsi := NewExtendedSpanIdentity(si, map[string]string{"service": "foo", "operation": "baz"})
+		So(nsi.Dims(), ShouldResemble, map[string]string{"service": "service", "operation": "operation", "sf_dimensionalized": "true", "error": "false"})
+	})
+}

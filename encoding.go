@@ -38,6 +38,21 @@ func (id *ID) String() string {
 	return fmt.Sprintf("%016x%016x", id[1], id[0])
 }
 
+func NewExtendedSpanIdentity(baseId *SpanIdentity, additionalDims map[string]string) *SpanIdentity {
+	si := &SpanIdentity{
+		Service:     baseId.Service,
+		Operation:   baseId.Operation,
+		HttpMethod:  baseId.HttpMethod,
+		Kind:        baseId.Kind,
+		Error:       baseId.Error,
+		ServiceMesh: baseId.ServiceMesh,
+	}
+	if bb, _ := json.Marshal(additionalDims); bb != nil {
+		si.AdditionalDimensions = string(bb)
+	}
+	return si
+}
+
 // SpanIdentity is a tuple of Service and Operation
 //easyjson:json
 type SpanIdentity struct {
@@ -88,7 +103,7 @@ func (k *SpanIdentity) Dims() map[string]string {
 	}
 	if k.AdditionalDimensions != "" {
 		m["sf_dimensionalized"] = "true"
-		json.Unmarshal([]byte(k.AdditionalDimensions), &m)
+		_ = json.Unmarshal([]byte(k.AdditionalDimensions), &m)
 	}
 	return m
 }
