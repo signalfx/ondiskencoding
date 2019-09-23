@@ -10,6 +10,8 @@ import (
 	"github.com/signalfx/golib/trace"
 )
 
+const true = "true"
+
 // low, high
 type ID [2]uint64
 
@@ -18,14 +20,15 @@ var errInvalid = errors.New("ID is not a 16 or 32 byte hex string")
 func GetID(s string) (ID, error) {
 	var err error
 	var low, high uint64
-	if len(s) == 16 {
+	switch len(s) {
+	case 16:
 		low, err = strconv.ParseUint(s, 16, 64)
-	} else if len(s) == 32 {
+	case 32:
 		high, err = strconv.ParseUint(s[:16], 16, 64)
 		if err == nil {
 			low, err = strconv.ParseUint(s[16:], 16, 64)
 		}
-	} else {
+	default:
 		err = errInvalid
 	}
 	return [2]uint64{low, high}, err
@@ -38,14 +41,14 @@ func (id *ID) String() string {
 	return fmt.Sprintf("%016x%016x", id[1], id[0])
 }
 
-func NewExtendedSpanIdentity(baseId *SpanIdentity, additionalDims map[string]string) *SpanIdentity {
+func NewExtendedSpanIdentity(baseID *SpanIdentity, additionalDims map[string]string) *SpanIdentity {
 	si := &SpanIdentity{
-		Service:     baseId.Service,
-		Operation:   baseId.Operation,
-		HttpMethod:  baseId.HttpMethod,
-		Kind:        baseId.Kind,
-		Error:       baseId.Error,
-		ServiceMesh: baseId.ServiceMesh,
+		Service:     baseID.Service,
+		Operation:   baseID.Operation,
+		HttpMethod:  baseID.HttpMethod,
+		Kind:        baseID.Kind,
+		Error:       baseID.Error,
+		ServiceMesh: baseID.ServiceMesh,
 	}
 	if bb, _ := json.Marshal(additionalDims); bb != nil {
 		si.AdditionalDimensions = string(bb)
@@ -60,9 +63,9 @@ type SpanIdentity struct {
 	Operation            string `json:",omitempty"`
 	HttpMethod           string `json:",omitempty"`
 	Kind                 string `json:",omitempty"`
+	AdditionalDimensions string `json:",omitempty"`
 	Error                bool   `json:",omitempty"`
 	ServiceMesh          bool   `json:",omitempty"`
-	AdditionalDimensions string `json:",omitempty"`
 }
 
 func (k *SpanIdentity) String() string {
@@ -88,7 +91,7 @@ func (k *SpanIdentity) Dims() map[string]string {
 		"operation": k.Operation,
 	}
 	if k.Error {
-		m["error"] = "true"
+		m["error"] = true
 	} else {
 		m["error"] = "false"
 	}
@@ -99,10 +102,10 @@ func (k *SpanIdentity) Dims() map[string]string {
 		m["kind"] = k.Kind
 	}
 	if k.ServiceMesh {
-		m["sf_serviceMesh"] = "true"
+		m["sf_serviceMesh"] = true
 	}
 	if k.AdditionalDimensions != "" {
-		m["sf_dimensionalized"] = "true"
+		m["sf_dimensionalized"] = true
 		_ = json.Unmarshal([]byte(k.AdditionalDimensions), &m)
 	}
 	return m

@@ -20,6 +20,7 @@ func Test(t *testing.T) {
 		{name: "bad format", traceID: "blarg", low: 0, high: 0, so: ShouldNotBeNil, se: ShouldNotEqual},
 	}
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			Convey("test stuff", t, func() {
 				id, err := GetID(test.traceID)
