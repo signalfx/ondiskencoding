@@ -1,6 +1,7 @@
 package encoding
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -40,12 +41,13 @@ func (id *ID) String() string {
 // SpanIdentity is a tuple of Service and Operation
 //easyjson:json
 type SpanIdentity struct {
-	Service     string `json:",omitempty"`
-	Operation   string `json:",omitempty"`
-	HttpMethod  string `json:",omitempty"`
-	Kind        string `json:",omitempty"`
-	Error       bool   `json:",omitempty"`
-	ServiceMesh bool   `json:",omitempty"`
+	Service              string `json:",omitempty"`
+	Operation            string `json:",omitempty"`
+	HttpMethod           string `json:",omitempty"`
+	Kind                 string `json:",omitempty"`
+	Error                bool   `json:",omitempty"`
+	ServiceMesh          bool   `json:",omitempty"`
+	AdditionalDimensions string `json:",omitempty"`
 }
 
 func (k *SpanIdentity) String() string {
@@ -58,6 +60,9 @@ func (k *SpanIdentity) String() string {
 	}
 	if k.ServiceMesh {
 		s += ", ServiceMesh:true" + k.Kind
+	}
+	if k.AdditionalDimensions != "" {
+		s += ", AdditionalDimensions:" + k.AdditionalDimensions
 	}
 	return fmt.Sprintf("Identity[Service:%s, Operation:%s, Error:%t%s]", k.Service, k.Operation, k.Error, s)
 }
@@ -80,6 +85,10 @@ func (k *SpanIdentity) Dims() map[string]string {
 	}
 	if k.ServiceMesh {
 		m["sf_serviceMesh"] = "true"
+	}
+	if k.AdditionalDimensions != "" {
+		m["sf_dimensionalized"] = "true"
+		json.Unmarshal([]byte(k.AdditionalDimensions), &m)
 	}
 	return m
 }

@@ -49,6 +49,8 @@ func easyjsonE453ad8fDecodeGithubComSignalfxOndiskencoding(in *jlexer.Lexer, out
 			out.Error = bool(in.Bool())
 		case "ServiceMesh":
 			out.ServiceMesh = bool(in.Bool())
+		case "AdditionalDimensions":
+			out.AdditionalDimensions = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -118,6 +120,16 @@ func easyjsonE453ad8fEncodeGithubComSignalfxOndiskencoding(out *jwriter.Writer, 
 			out.RawString(prefix)
 		}
 		out.Bool(bool(in.ServiceMesh))
+	}
+	if in.AdditionalDimensions != "" {
+		const prefix string = ",\"AdditionalDimensions\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.AdditionalDimensions))
 	}
 	out.RawByte('}')
 }
