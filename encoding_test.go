@@ -1,8 +1,9 @@
 package encoding
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func Test(t *testing.T) {
@@ -20,6 +21,7 @@ func Test(t *testing.T) {
 		{name: "bad format", traceID: "blarg", low: 0, high: 0, so: ShouldNotBeNil, se: ShouldNotEqual},
 	}
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			Convey("test stuff", t, func() {
 				id, err := GetID(test.traceID)
@@ -31,4 +33,17 @@ func Test(t *testing.T) {
 			})
 		})
 	}
+}
+
+func TestAdditionalDims(t *testing.T) {
+	Convey("test additional dims", t, func() {
+		si := &SpanIdentity{Service: "service", Operation: "operation"}
+		nsi := NewExtendedSpanIdentity(si, map[string]string{"foo": "bar", "bar": "baz"})
+		So(nsi.Dims(), ShouldResemble, map[string]string{"foo": "bar", "bar": "baz", "service": "service", "operation": "operation", "sf_dimensionalized": "true", "error": "false"})
+	})
+	Convey("test forbidden dims", t, func() {
+		si := &SpanIdentity{Service: "service", Operation: "operation"}
+		nsi := NewExtendedSpanIdentity(si, map[string]string{"service": "foo", "operation": "baz"})
+		So(nsi.Dims(), ShouldResemble, map[string]string{"service": "service", "operation": "operation", "sf_dimensionalized": "true", "error": "false"})
+	})
 }
