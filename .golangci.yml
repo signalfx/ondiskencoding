@@ -37,3 +37,11 @@ issues:
     - text: G102
       linters:
         - gosec
+
+    # we committed to this spelling of HttpMethod a long long time ago in a galaxy far far away...
+    - text: "struct field `HttpMethod` should be `HTTPMethod`"
+      linters:
+        - golint
+    - text: "struct field HttpMethod should be HTTPMethod"
+      linters:
+        - stylecheck
