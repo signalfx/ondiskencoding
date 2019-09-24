@@ -10,7 +10,7 @@ import (
 	"github.com/signalfx/golib/trace"
 )
 
-const true = "true"
+const trueStr = "true"
 
 // low, high
 type ID [2]uint64
@@ -91,7 +91,7 @@ func (k *SpanIdentity) Dims() map[string]string {
 		"operation": k.Operation,
 	}
 	if k.Error {
-		m["error"] = true
+		m["error"] = trueStr
 	} else {
 		m["error"] = "false"
 	}
@@ -102,10 +102,10 @@ func (k *SpanIdentity) Dims() map[string]string {
 		m["kind"] = k.Kind
 	}
 	if k.ServiceMesh {
-		m["sf_serviceMesh"] = true
+		m["sf_serviceMesh"] = trueStr
 	}
 	if k.AdditionalDimensions != "" {
-		m["sf_dimensionalized"] = true
+		m["sf_dimensionalized"] = trueStr
 		_ = json.Unmarshal([]byte(k.AdditionalDimensions), &m)
 	}
 	return m
