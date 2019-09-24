@@ -86,10 +86,19 @@ func (k *SpanIdentity) String() string {
 }
 
 func (k *SpanIdentity) Dims() map[string]string {
-	m := map[string]string{
-		"service":   k.Service,
-		"operation": k.Operation,
+	var m = map[string]string{}
+
+	// unmarshall additional dimensions to the map first.  that way if there's a dim called "service" or "operation"
+	// it will be overwritten by the proper service or operation of the span identity.
+	if k.AdditionalDimensions != "" {
+		m["sf_dimensionalized"] = trueStr
+		_ = json.Unmarshal([]byte(k.AdditionalDimensions), &m)
 	}
+
+	// ensure that the dims for span identity fields are set over top of the additional dims that were unmarshaled
+	m["service"] = k.Service
+	m["operation"] = k.Operation
+
 	if k.Error {
 		m["error"] = trueStr
 	} else {
@@ -104,10 +113,7 @@ func (k *SpanIdentity) Dims() map[string]string {
 	if k.ServiceMesh {
 		m["sf_serviceMesh"] = trueStr
 	}
-	if k.AdditionalDimensions != "" {
-		m["sf_dimensionalized"] = trueStr
-		_ = json.Unmarshal([]byte(k.AdditionalDimensions), &m)
-	}
+
 	return m
 }
 
