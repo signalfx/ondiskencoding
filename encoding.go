@@ -68,49 +68,49 @@ type SpanIdentity struct {
 	ServiceMesh          bool   `json:",omitempty"`
 }
 
-func (k *SpanIdentity) String() string {
+func (v *SpanIdentity) String() string {
 	s := ""
-	if k.HttpMethod != "" {
-		s += ", HttpMethod:" + k.HttpMethod
+	if v.HttpMethod != "" {
+		s += ", HttpMethod:" + v.HttpMethod
 	}
-	if k.Kind != "" {
-		s += ", Kind:" + k.Kind
+	if v.Kind != "" {
+		s += ", Kind:" + v.Kind
 	}
-	if k.ServiceMesh {
-		s += ", ServiceMesh:true" + k.Kind
+	if v.ServiceMesh {
+		s += ", ServiceMesh:true" + v.Kind
 	}
-	if k.AdditionalDimensions != "" {
-		s += ", AdditionalDimensions:" + k.AdditionalDimensions
+	if v.AdditionalDimensions != "" {
+		s += ", AdditionalDimensions:" + v.AdditionalDimensions
 	}
-	return fmt.Sprintf("Identity[Service:%s, Operation:%s, Error:%t%s]", k.Service, k.Operation, k.Error, s)
+	return fmt.Sprintf("Identity[Service:%s, Operation:%s, Error:%t%s]", v.Service, v.Operation, v.Error, s)
 }
 
-func (k *SpanIdentity) Dims() map[string]string {
+func (v *SpanIdentity) Dims() map[string]string {
 	var m = map[string]string{}
 
-	// unmarshall additional dimensions to the map first.  that way if there's a dim called "service" or "operation"
+	// unmarshall additional dimensions to the map first.  that way if there'v a dim called "service" or "operation"
 	// it will be overwritten by the proper service or operation of the span identity.
-	if k.AdditionalDimensions != "" {
+	if v.AdditionalDimensions != "" {
 		m["sf_dimensionalized"] = trueStr
-		_ = json.Unmarshal([]byte(k.AdditionalDimensions), &m)
+		_ = json.Unmarshal([]byte(v.AdditionalDimensions), &m)
 	}
 
 	// ensure that the dims for span identity fields are set over top of the additional dims that were unmarshaled
-	m["service"] = k.Service
-	m["operation"] = k.Operation
+	m["service"] = v.Service
+	m["operation"] = v.Operation
 
-	if k.Error {
+	if v.Error {
 		m["error"] = trueStr
 	} else {
 		m["error"] = "false"
 	}
-	if k.HttpMethod != "" {
-		m["httpMethod"] = k.HttpMethod
+	if v.HttpMethod != "" {
+		m["httpMethod"] = v.HttpMethod
 	}
-	if k.Kind != "" {
-		m["kind"] = k.Kind
+	if v.Kind != "" {
+		m["kind"] = v.Kind
 	}
-	if k.ServiceMesh {
+	if v.ServiceMesh {
 		m["sf_serviceMesh"] = trueStr
 	}
 
@@ -150,8 +150,8 @@ type ExpiredBufferEntry struct {
 	DefinitiveTraceID  bool         `json:",omitempty"` // spanID == traceID for buffer entry
 }
 
-func (e *ExpiredBufferEntry) HasInitiating() bool {
-	return e.InitiatingIdentity.Service != "" && e.InitiatingIdentity.Operation != ""
+func (v *ExpiredBufferEntry) HasInitiating() bool {
+	return v.InitiatingIdentity.Service != "" && v.InitiatingIdentity.Operation != ""
 }
 
 //easyjson:json
@@ -170,9 +170,9 @@ type BufferEntry struct {
 	ToBeReleased   bool        `json:",omitempty"` // spans that have been selected to be released
 }
 
-func (b *BufferEntry) GetStartTime() int64 {
-	if b.Initiating != nil && b.Initiating.Timestamp != nil {
-		return *b.Initiating.Timestamp
+func (v *BufferEntry) GetStartTime() int64 {
+	if v.Initiating != nil && v.Initiating.Timestamp != nil {
+		return *v.Initiating.Timestamp
 	}
 	return 0
 }
