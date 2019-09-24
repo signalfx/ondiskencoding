@@ -41,6 +41,7 @@ func (id *ID) String() string {
 	return fmt.Sprintf("%016x%016x", id[1], id[0])
 }
 
+// NewExtendedSpanIdentity returns a SpanIdentity with additional dimensions applied
 func NewExtendedSpanIdentity(baseID *SpanIdentity, additionalDims map[string]string) *SpanIdentity {
 	si := &SpanIdentity{
 		Service:     baseID.Service,
