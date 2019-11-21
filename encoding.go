@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/signalfx/golib/trace"
+	"github.com/signalfx/golib/v3/trace"
 )
 
 const trueStr = "true"
